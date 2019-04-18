@@ -1,0 +1,36 @@
+{
+    "name": "laravel-admin-ext/qiniu-upload",
+    "description": "upload big files for qiniu",
+    "type": "library",
+    "keywords": ["laravel-admin", "extension"],
+    "homepage": "https://github.com/laravel-admin-ext/qiniu-upload",
+    "license": "MIT",
+    "version": "1.0.0",
+    "authors": [
+        {
+            "name": "jack",
+            "email": "final_m@foxmail.com"
+        }
+    ],
+    "require": {
+        "php": ">=7.0.0",
+        "encore/laravel-admin": "~1.6",
+        "qiniu/php-sdk": "^7.2"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "~6.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Encore\\QiniuUpload\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Encore\\QiniuUpload\\QiniuUploadServiceProvider"
+            ]
+
+        }
+    }
+}
