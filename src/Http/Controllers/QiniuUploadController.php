@@ -35,13 +35,7 @@ class QiniuUploadController extends Controller
 
     public function file_exists(Request $request)
     {
-        $disk = Storage::disk('qiniu');
-        if($disk->exists($request->filename))
-        {
-            return ['status'=> '1', 'url'=>$disk->downloadUrl($request->filename)];
-        }else{
-            return ['status'=> '0'];
-        }
+        return ['status'=> '0'];
     }
 
 }

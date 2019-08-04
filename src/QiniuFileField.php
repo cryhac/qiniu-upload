@@ -1,5 +1,7 @@
 <?php
+
 namespace Encore\QiniuUpload;
+
 use Encore\Admin\Form\Field;
 use Qiniu\Auth;
 use Qiniu\Storage\UploadManager;
@@ -23,9 +25,10 @@ class QiniuFileField extends Field
         $upManager = new UploadManager();
         $auth = new Auth($this->accessKey, $this->secretKey);
         $token = $auth->uploadToken($this->bucket);
+        $key = md5(time());
         $name = $this->formatName($this->column);
         $string = '';
-        if($this->form->model()->id >0){
+        if ($this->form->model()->id > 0) {
             $disk = Storage::disk('qiniu');
             $file_url = $disk->downloadUrl($this->form->model()->url);
             $size = $disk->size($this->form->model()->url);
@@ -134,35 +137,26 @@ class QiniuFileField extends Field
             $('#{$name}_file').fileinput({
                 language: 'zh',
                 uploadUrl: url,
-                maxFileCount: 1,
+                maxFileCount: 5,
                 {$string}
                 uploadExtraData: function() {
-                    var out = {'token':'{$token}', 'key': window.qiniu_key}
+                    var key = '{$key}';
+                    var bucket_key = md5(key+Math.random()*100);
+                    
+                    var out = {'token':'{$token}', 'key': bucket_key}
                     return out;
-                }
-            }).on('filebatchselected', function(event, files) { 
-                if(files && files[0])
-                {
-                    var filename = files[0]['name'];
-                    var extension = filename.split('.').pop();
-                    var hash = md5(files[0]['name']);
-                    window.qiniu_key = hash + '.' +extension
-                    //判断当前文件是否已经存在
-                    $.get('{$url}', {filename: window.qiniu_key}, function(res){
-                        if(res.status ==1) {
-                            swal('文件已存在', '地址：'+res.url, 'error');
-                        }
-                    }, 'json')
                 }
             }).on('fileuploaded', function(event, data, previewId, index) {
                 var form = data.form, files = data.files, extra = data.extra,
                     response = data.response, reader = data.reader;
-                    $('#{$name}_value').val(response.key);
+                    var init =  $('#{$name}_value').val()+"|";
+                    $('#{$name}_value').val(init+response.key);
                     console.log(data);
-            });; 
+            });;
         })
 SRC;
+        
         return parent::render();
     }
-
+    
 }
